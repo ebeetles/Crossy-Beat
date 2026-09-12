@@ -140,6 +140,8 @@ const calib = {
     document.getElementById('calibCount').textContent = '0 / 8';
     this.taps = []; this.beatTimes = []; this.running = true;
     Tone.Transport.bpm.value = 100;
+    if (this.repeatId !== null) { Tone.Transport.clear(this.repeatId); this.repeatId = null; }
+    Tone.Transport.stop();
     Tone.Transport.cancel();
     this.repeatId = Tone.Transport.scheduleRepeat((time) => {
       this.beatTimes.push(time);
@@ -202,8 +204,12 @@ document.getElementById('calibSkip').addEventListener('click', () => calib.finis
 document.getElementById('restartBtn').addEventListener('click', () => startRun());
 
 window.addEventListener('keydown', (e) => {
-  if (App.state === 'DEAD' && (e.code === 'KeyR' || e.code === 'Space')) { e.preventDefault(); startRun(); }
-  if (calib.running && e.code === 'Space') { e.preventDefault(); calib.tap(); }
+  // Calibration owns the keyboard while it runs — a SPACE here is a tap, nothing else.
+  if (calib.running) {
+    if (e.code === 'Space') { e.preventDefault(); calib.tap(); }
+    return;
+  }
+  if (App.state === 'DEAD' && (e.code === 'KeyR' || e.code === 'Space')) { e.preventDefault(); startRun(); return; }
   if (App.state === 'TITLE' && (e.code === 'Space' || e.code === 'Enter')) {
     e.preventDefault(); document.getElementById('startBtn').click();
   }
