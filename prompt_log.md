@@ -1,5 +1,8 @@
 Initial claude chat log for design: https://claude.ai/share/4aeed551-d705-458e-9424-1d7f9c23f26a
 
+
+Build Prompts:
+
 # CROSSBEAT — Design & Build Spec
 
 > Working title; rename freely. A rhythm game built on Crossy Road's skeleton: a 2.5D voxel hopper where the **entire world advances one step per beat**, and the player commits exactly one move per beat inside a strict timing window. Think *Crypt of the NecroDancer* applied to *Crossy Road*.
@@ -224,3 +227,45 @@ Audio output latency varies by device and browser. On first run (and re-runnable
 6. Reuse geometries/materials, cull off-screen rows, cap particles.
 7. Calibration is mandatory for feel, not a nice-to-have.
 8. Keep hazard motion deterministic and telegraphed so planning ahead is a real skill.
+
+
+
+One immediate fix that would make the game look much nicer is to have it at an angle just like crossy road, and have the map fill up the entire screen so that we don't see anything off map.
+
+There are several small bugs to fix. The chicken no longer turns when going left and right. The train "hits" the chicken even though it is far away, could be a collision detection issue, the cars and logs just disappears while theyre still on screen, and the creeping brown ground in the back looks awful.
+
+There are still collision issues with the train and the cars, they pretty much have to completely overlap with the chicken before its game over. The danger edge still doesn't look great, maybe we can redesign it entirely.
+
+Two more fixes. There is no good visual cue of when it is acceptable to move, it is purely based on rhythm of the audio, which sometimes feels nondeterministic. Finally the cars and trains dont look like cars or trains
+
+The calibration step does not work at all
+
+
+
+
+Initial 30 minute prompts:
+
+Restore
+I would like to build crossy road. Before building, draft a spec doc step by step how we can make this happen from scratch
+
+Begin building crossy road as defined in in javascript. Ask questions if anything is unclear during the process
+
+web game using HTML52. just use shapes3. do not use mobile, only support desktop keyboard controls4. modular5. skip audio
+
+It is currently completely broken, there is the game screen but it is blank. no players, no obstacles, no movements, etc
+
+It still falls in the water when its on the log
+
+There is no console log when i step on a log, its just game over
+
+It wokrs now. Players should follow the log automatically, and also the log spawns make it impossible to cross a river at times
+
+huge errors when i step on a log now:Uncaught ReferenceError: GRID_WIDTH is not definedat Game.updateLogCarry (Game.js:125:43)at Game.update (Game.js:79:14)at GameController.gameLoop (main.js:106:23)at main.js:96:42
+
+I want faster and smoother movement, right now, it can only go so fast and I cant spam the arrow keys.
+
+Also make the logs shorter while still guaranteeing that the player can always cross the river.
+
+The movements for up and down are inverted, up arrow moves the player down and vice versa
+
+Lets really enhance the graphics now, keeping all features functional
