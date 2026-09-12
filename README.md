@@ -1,30 +1,14 @@
 # CROSSBEAT
 
-A rhythm game on Crossy Road's skeleton: a 2.5D voxel hopper where the whole world
-advances **one step per beat**, and you may commit exactly one move per beat inside a
-strict timing window. Crypt of the NecroDancer applied to Crossy Road.
+An interesting reimagination of the classic game Crossy Road. Cross Beat is a mix of the standard Crossy Road and a rhythm game.
 
-- **Static site, no build step.** Plain HTML/CSS/JS ES modules.
-- **Everything procedural.** All geometry is `BoxGeometry`; all audio is synthesized at
-  runtime with Tone.js. No model, texture, or audio files.
+Instructions:
 - **Desktop + keyboard.** WASD / arrows to hop, on the beat.
+- You lose if you: hit an obstacle (car, water, train), or let the eagle catch up to you.
+- Points are rewarded for moving forward and picking up coins
 
-## Run locally
+I used claude chat and claude code to build this project, first using chat to design and brainstorm and draft up a spec doc, then using claude code to implement, debug, and iterate.
 
-ES modules and import maps do **not** work over `file://`. Serve the folder:
-
-```bash
-python3 -m http.server 8123
-```
-
-Then open <http://localhost:8123>. Click **PRESS TO START** (this unlocks audio) and run
-the one-time calibration.
-
-## Deploy to GitHub Pages
-
-Push these files to a repo and enable Pages (Settings → Pages → deploy from branch).
-No build/CI needed — Pages serves the static files directly. Three.js and Tone.js load
-from CDNs via the import map / a script tag.
 
 ## How it works (architecture)
 
