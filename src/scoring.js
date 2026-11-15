@@ -27,5 +27,5 @@ export function coinScore(onBeat) {
 
 // Whether a finished run's score beats the stored best.
 export function isNewBest(score, best) {
-  return score >= best;
+  return score > best;
 }
