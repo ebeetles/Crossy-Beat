@@ -9,6 +9,7 @@ import { RenderEngine } from './render.js';
 import { Juice } from './juice.js';
 import { Audio } from './audio.js';
 import { Hud } from './hud.js';
+import { scoreMove, coinScore, isNewBest } from './scoring.js';
 
 const Tone = window.Tone;
 const BEST_KEY = 'crossbeat.best';
@@ -71,15 +72,14 @@ function onBeat(beatIndex, time) {
 
   // Scoring + combo.
   if (world.player.row > prevRow) {
-    App.score += 10 * (world.player.row - prevRow);
-    App.combo += 1;
-    App.score += (latched && latched.grade === 'perfect' ? CONFIG.COMBO_PERFECT_BONUS
-      : CONFIG.COMBO_GOOD_BONUS) * App.combo;
+    const move = scoreMove(world.player.row - prevRow, App.combo, latched ? latched.grade : null);
+    App.score += move.points;
+    App.combo = move.combo;
     if (App.combo > 1 && App.combo % 8 === 0) { audio.comboMilestone(App.combo); hud.toastMsg('COMBO ×' + App.combo); }
     hud.setCombo(App.combo);
   }
   if (ev.coin) {
-    App.score += CONFIG.COIN_VALUE + (latched ? CONFIG.COIN_ONBEAT_BONUS : 0);
+    App.score += coinScore(!!latched);
     const px = world.player.col, pz = -world.player.row;
     juice.burst(px, 0.6, pz, 0xffd23f, 12, 2.2, 3);
   }
@@ -105,7 +105,7 @@ function die(cause) {
     : cause === 'train' ? 0x999999 : cause === 'eagle' ? 0x8a5a2b : 0xffffff);
   juice.burst(p.col, 0.5, -p.row, col, 26, 4.5, 6);
 
-  const isNew = App.score > App.best;
+  const isNew = isNewBest(App.score, App.best);
   if (isNew) { App.best = App.score; localStorage.setItem(BEST_KEY, String(App.best)); }
   hud.setBest(App.best);
   setTimeout(() => hud.showGameOver(App.score, App.best, isNew), 700);

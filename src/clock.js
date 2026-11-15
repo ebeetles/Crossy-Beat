@@ -2,6 +2,7 @@
 // Beat timing is derived ONLY from the audio context, never from rAF/performance deltas.
 
 import { CONFIG, beatDur, windowHalf } from './config.js';
+import { gradeError } from './timing.js';
 
 const Tone = window.Tone;
 
@@ -89,11 +90,6 @@ export class Clock {
     const p = pAudio + this.inputOffset;
     const target = this.nextBeatTime();
     const err = p - target;                  // <0 early, >0 late
-    const w = this.windowHalfSec();
-    if (Math.abs(err) <= w) {
-      const perfectW = CONFIG.PERFECT_FRAC * this.beatDurSec;
-      return { valid: true, grade: Math.abs(err) <= perfectW ? 'perfect' : 'good', err };
-    }
-    return { valid: false, grade: null, err };
+    return gradeError(err, this.beatDurSec);
   }
 }
