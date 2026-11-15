@@ -5,6 +5,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { gradeError } from "../src/timing.js";
+import { CONFIG } from "../src/config.js";
 
 const BEAT_110 = 60 / 110;          // ~0.545 s per beat
 const WINDOW_110 = 0.22 * BEAT_110; // ~0.120 s (bigger than the 90 ms floor)
@@ -40,12 +41,19 @@ test("a press just past the perfect boundary is good", () => {
   assert.equal(gradeError(PERFECT_110 + 0.001, BEAT_110).grade, "good");
 });
 
-test("at 160 BPM the 90 ms floor makes an 88 ms press valid (22% would only be 82.5 ms)", () => {
-  assert.equal(gradeError(0.088, 60 / 160).valid, true);
+// Floor tests read the floor from config on purpose: they protect the LOGIC
+// (the window never shrinks below the floor), not the tuned value, so the floor
+// can be retuned without editing tests. A 0.2 s beat makes 22% (44 ms) far
+// smaller than any sensible floor, so the floor is what decides.
+const FLOOR = CONFIG.WINDOW_FLOOR_MS / 1000;
+const SHORT_BEAT = 0.2;
+
+test("when 22% of a beat is tiny, a press exactly at the floor still counts", () => {
+  assert.equal(gradeError(FLOOR, SHORT_BEAT).valid, true);
 });
 
-test("at 160 BPM a 95 ms press is outside even the 90 ms floor", () => {
-  assert.equal(gradeError(0.095, 60 / 160).valid, false);
+test("when 22% of a beat is tiny, a press 1 ms past the floor is a miss", () => {
+  assert.equal(gradeError(FLOOR + 0.001, SHORT_BEAT).valid, false);
 });
 
 test("at 60 BPM the window scales up with the beat: a 200 ms press still counts", () => {
