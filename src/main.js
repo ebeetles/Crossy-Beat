@@ -9,7 +9,7 @@ import { RenderEngine } from './render.js';
 import { Juice } from './juice.js';
 import { Audio } from './audio.js';
 import { Hud } from './hud.js';
-import { scoreMove, coinScore, isNewBest } from './scoring.js';
+import { rowsGained, scoreMove, coinScore, isNewBest } from './scoring.js';
 
 const Tone = window.Tone;
 const BEST_KEY = 'crossbeat.best';
@@ -71,8 +71,9 @@ function onBeat(beatIndex, time) {
   }
 
   // Scoring + combo.
-  if (world.player.row > prevRow) {
-    const move = scoreMove(world.player.row - prevRow, App.combo, latched ? latched.grade : null);
+  const gained = rowsGained(prevRow, world.player.row);
+  if (gained > 0) {
+    const move = scoreMove(gained, App.combo, latched ? latched.grade : null);
     App.score += move.points;
     App.combo = move.combo;
     if (App.combo > 1 && App.combo % 8 === 0) { audio.comboMilestone(App.combo); hud.toastMsg('COMBO ×' + App.combo); }

@@ -3,6 +3,11 @@
 
 import { CONFIG } from './config.js';
 
+// How many rows of scoring progress a hop from prevRow to newRow made.
+export function rowsGained(prevRow, newRow) {
+  return Math.max(0, newRow - prevRow);
+}
+
 // Points and new combo for one beat's movement.
 // rowsGained: rows moved forward this beat (0 if none).
 // combo: the combo count before this move.
