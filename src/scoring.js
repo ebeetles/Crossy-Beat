@@ -4,8 +4,10 @@
 import { CONFIG } from './config.js';
 
 // How many rows of scoring progress a hop from prevRow to newRow made.
-export function rowsGained(prevRow, newRow) {
-  return Math.max(0, newRow - prevRow);
+// Only rows beyond furthest (the furthest row reached before this hop) count,
+// so hopping back and forth over already-reached rows scores nothing.
+export function rowsGained(prevRow, newRow, furthest = prevRow) {
+  return Math.max(0, newRow - Math.max(prevRow, furthest));
 }
 
 // Points and new combo for one beat's movement.

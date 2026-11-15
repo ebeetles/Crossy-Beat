@@ -59,6 +59,7 @@ function onBeat(beatIndex, time) {
 
   const latched = input.takeLatched();
   const prevRow = world.player.row;
+  const prevFurthest = world.furthest;
   const ev = world.tick(beatIndex, latched);
 
   // Difficulty coupling: tempo + stems + biome step with the tier.
@@ -71,7 +72,7 @@ function onBeat(beatIndex, time) {
   }
 
   // Scoring + combo.
-  const gained = rowsGained(prevRow, world.player.row);
+  const gained = rowsGained(prevRow, world.player.row, prevFurthest);
   if (gained > 0) {
     const move = scoreMove(gained, App.combo, latched ? latched.grade : null);
     App.score += move.points;
