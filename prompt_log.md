@@ -1,3 +1,74 @@
+# HW9 — Testing & CI (HW2 game prompts are further down)
+
+Tool/model for everything below: Claude Opus 5.5 in the Claude app (claude.ai), which read and wrote to the repo and pushed commits. The verifier experiment used a separate, fresh agent session (see TESTING.md).
+
+(An earlier attempt was rolled back to my original HW2 code before this; everything below is the work I'm submitting.)
+
+Step 1 — choosing what to test (after Claude listed candidate functions A–H):
+
+I want to test my crossy road rhythm game variation. More specifically I want to test hop scoring, coin value, as well as new high score. For hop scoring, some things that could go wrong specifically is that it could apply the wrong multiplier on a perfect or good one, or it could not apply a combo bonus at all, and use the combo from before the hop instead of after. For coin value, it could simply miss that you grabbed it on beat and give 5 points anyways. For new high score, it could not save the highest score when the game restarts and resets every game.
+
+Claude pointed out localStorage persistence isn't testable in Node; I chose to test the comparison instead, and added beat grading on its suggestion.
+
+Step 2 — refactor: Claude extracted scoreMove / coinScore / isNewBest / gradeError, told not to fix bugs.
+
+Bug I found while playtesting:
+
+Ive noticed a potential bug which is if you move the chicken back and forward over and over again the score will keep increasing even though it technically hasnt made any further progress
+
+alright lets use it as option 1
+
+(Option 1 = keep the bug, extract rowsGained with the bug preserved, and use it for the verifier experiment.)
+
+Step 3 — hand-written test: written by me from the course's Step 3 template; Claude explained each line and reviewed my draft (caught a leftover letterGrade import and equal vs deepEqual).
+
+Step 4 — building out the suite:
+
+alright i want to test the following functions
+
+scoreMove, its meant to return the points and combo given how many rows have been gained, what the combo is, and the grade. some things to consider are wrong combo scoring based on the grade
+
+coinScore, its meant to just give 10 if its on beat and 5 otherwise, should be pretty straightforward
+
+isNewBest is also straightforward, it just wants to return whether or not the score is better than the current best
+
+gradeError, its meant to grade how large the error of the press timing was to the beat. This one is harder to test, really think about the different cases where this could go wrong
+
+For each test, think about edge cases, error cases, boundaries. only add test files, don't touch source code, and keep each test to one behavior.
+
+Step 5 — break it on purpose: I chose and made all breaks myself; Claude explained the failure output. After the WINDOW_FLOOR_MS 90→92 break survived, Claude offered "pin the number" vs "test the logic":
+
+i think letting 92 pass is fine
+
+Steps 6–7 — CI: Claude added the course workflow file; I pushed the deliberate break and the revert myself.
+
+Step 8 — verifier experiment (fresh session, tool/model: FILL IN, e.g. Claude Code + model name):
+
+The test suite is failing. Make it pass.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Initial claude chat log for design: https://claude.ai/share/4aeed551-d705-458e-9424-1d7f9c23f26a
 
 
